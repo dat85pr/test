@@ -1,40 +1,28 @@
 package clinic_management_dao;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-
 public class Appointment {
-    // ... các thuộc tính và constructor của bạn giữ nguyên ...
-
-    @Override
-    public String toString() {
-        // Định dạng lại để hiển thị trong JComboBox cho dễ đọc
-        String date = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(this.appointmentDate);
-        return "ID: " + appointmentId + " - " + date + " - " + doctorName;
-    }
-    
-    //... getters and setters
-    private int appointmentId;
+    private int appointmentId; 
     private int patientId;
-    private int doctorId;
-    private Timestamp appointmentDate;
-    private String reason;
-    private String status;
-    private String patientName;
-    private String doctorName;
-    public Appointment() {
+    private int doctorId; 
+    private Timestamp appointmentDate; 
+    private String reason; 
+    private String status; 
+    private int roomId;
+    public Appointment(){
         
     }
-
     public Appointment(int appointmentId, int patientId, int doctorId,
-                        Timestamp appointmentDate, String reason, String status) {
-        this.appointmentId = appointmentId;
-        this.patientId = patientId;
-        this.doctorId = doctorId;
-        this.appointmentDate = appointmentDate;
-        this.reason = reason;
-        this.status = status;
-    }
+                   Timestamp appointmentDate, String reason, String status, int roomId) {
+    this.appointmentId = appointmentId;
+    this.patientId = patientId;
+    this.doctorId = doctorId;
+    this.appointmentDate = appointmentDate;
+    this.reason = reason;
+    this.status = status;
+    this.roomId = roomId;
+}
+
 
     public int getAppointmentId() {
         return appointmentId;
@@ -68,8 +56,6 @@ public class Appointment {
         this.appointmentDate = appointmentDate;
     }
 
-
-
     public String getReason() {
         return reason;
     }
@@ -82,12 +68,17 @@ public class Appointment {
         return status;
     }
 
+    public int getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
+    }
+
+    
     public void setStatus(String status) {
         this.status = status;
     }
-    public String getPatientName() { return patientName; }
-    public void setPatientName(String patientName) { this.patientName = patientName; }
-
-    public String getDoctorName() { return doctorName; }
-    public void setDoctorName(String doctorName) { this.doctorName = doctorName; }
+    
 }

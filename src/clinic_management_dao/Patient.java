@@ -10,7 +10,7 @@ public class Patient {
     private String bloodGroup;
     private String email;
     private String insuranceNumber;
-    public Patient() {}
+
     // Constructor
     public Patient(int id, String fullName, String gender, String phoneNumber,
                    String dateOfBirth, String address, String bloodGroup,
