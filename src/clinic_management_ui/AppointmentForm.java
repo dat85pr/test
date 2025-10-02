@@ -319,10 +319,14 @@ public class AppointmentForm extends javax.swing.JFrame {
         patientForm.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // Tạo và hiển thị cửa sổ quản lý hồ sơ bệnh án
-        MedicalRecordForm managementForm = new MedicalRecordForm(this);
-        managementForm.setVisible(true);
-    }
+    // Tạo một đối tượng của cửa sổ MedicalRecordForm mới
+        MedicalRecordForm medicalForm = new MedicalRecordForm();
+        // Làm cho nó hiện ra
+        medicalForm.setVisible(true);
+    
+        // Đóng cửa sổ AppointmentForm hiện tại lại
+        this.dispose(); 
+    }   
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton8ActionPerformed
