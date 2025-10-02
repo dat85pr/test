@@ -1,65 +1,27 @@
 package clinic_management_dao;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
+// Class này chỉ để chứa dữ liệu hiển thị, không tương ứng 1-1 với bảng nào
 public class MedicalRecordDisplay {
     private int recordId;
     private String patientName;
     private String doctorName;
+    private Date appointmentDate;
     private String diseaseName;
     private String diagnosis;
-    private String treatment;
-    private Timestamp createdAt;
 
-    public MedicalRecordDisplay() {}
-
-    // Getters & Setters
-    public int getRecordId() {
-        return recordId;
-    }
-    public void setRecordId(int recordId) {
-        this.recordId = recordId;
-    }
-
-    public String getPatientName() {
-        return patientName;
-    }
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
-    }
-
-    public String getDoctorName() {
-        return doctorName;
-    }
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
-    }
-
-    public String getDiseaseName() {
-        return diseaseName;
-    }
-    public void setDiseaseName(String diseaseName) {
-        this.diseaseName = diseaseName;
-    }
-
-    public String getDiagnosis() {
-        return diagnosis;
-    }
-    public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
-    }
-
-    public String getTreatment() {
-        return treatment;
-    }
-    public void setTreatment(String treatment) {
-        this.treatment = treatment;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+    // Getters and Setters...
+    public int getRecordId() { return recordId; }
+    public void setRecordId(int recordId) { this.recordId = recordId; }
+    public String getPatientName() { return patientName; }
+    public void setPatientName(String patientName) { this.patientName = patientName; }
+    public String getDoctorName() { return doctorName; }
+    public void setDoctorName(String doctorName) { this.doctorName = doctorName; }
+    public Date getAppointmentDate() { return appointmentDate; }
+    public void setAppointmentDate(Date appointmentDate) { this.appointmentDate = appointmentDate; }
+    public String getDiseaseName() { return diseaseName; }
+    public void setDiseaseName(String diseaseName) { this.diseaseName = diseaseName; }
+    public String getDiagnosis() { return diagnosis; }
+    public void setDiagnosis(String diagnosis) { this.diagnosis = diagnosis; }
 }

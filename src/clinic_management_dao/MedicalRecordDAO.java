@@ -72,4 +72,32 @@ public class MedicalRecordDAO {
             return false;
         }
     }
+    
+
+    public List<MedicalRecordDisplay> getAllRecordsWithDetails() {
+        List<MedicalRecordDisplay> list = new ArrayList<>();
+        String sql = "SELECT mr.record_id, p.patient_name, d.doctor_name, a.appointment_date, dis.disease_name, mr.diagnosis " +
+                    "FROM medical_records mr " +
+                    "JOIN appointments a ON mr.appointment_id = a.appointment_id " +
+                     "JOIN patients p ON mr.patient_id = p.patient_id " +
+                     "JOIN doctors d ON mr.doctor_id = d.doctor_id " +
+                     "LEFT JOIN diseases dis ON mr.disease_id = dis.disease_id " +
+                     "ORDER BY a.appointment_date DESC";
+        try (Connection conn = Connect.ConnectDB();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                // ... code để điền dữ liệu vào list ...
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<MedicalRecordDisplay> searchRecords(String patientName, String doctorName) {
+        List<MedicalRecordDisplay> list = new ArrayList<>();
+        // ... code tìm kiếm tương tự như hàm search trong AppointmentDAO ...
+     return list;
+    }
 }
