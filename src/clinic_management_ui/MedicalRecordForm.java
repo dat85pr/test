@@ -10,6 +10,8 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -29,23 +31,21 @@ import java.util.List;
 
 public class MedicalRecordForm extends JFrame {
 
-    // --- DAO ---
     private final MedicalRecordDAO recordDAO = new MedicalRecordDAO();
     private final PrescriptionDAO prescriptionDAO = new PrescriptionDAO();
+    private Integer currentlyEditingPrescriptionId = null;
 
-    // --- UI Components ---
     private JTextField txtPatientName, txtDoctorName;
-    private JButton btnSearch, btnDeleteRecord;
+    private JButton btnSearch, btnDeleteRecord, btnEditRecord;
     private JTable tblRecords;
     private DefaultTableModel recordTableModel;
-
     private JPanel prescriptionPanel;
     private JTable tblPrescriptions;
     private DefaultTableModel prescriptionTableModel;
     private JTextField txtMedicineName, txtDosage, txtQuantity;
     private JTextArea txtInstructions;
-    private JButton btnSavePrescription, btnCancelPrescription, btnDeletePrescription;
-    
+    // === THAY ĐỔI 1: Đổi tên các nút ===
+    private JButton btnAddOrUpdate, btnNew, btnDeletePrescription;
     private JPanel navPanel;
 
     public MedicalRecordForm() {
@@ -57,54 +57,27 @@ public class MedicalRecordForm extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    /**
-     * === THAY ĐỔI 1: Cập nhật hàm này để thêm panel nút Save/Cancel ở dưới cùng ===
-     */
     private void initComponents() {
         JPanel mainPanel = new JPanel(new BorderLayout());
-        
-        // 1. Panel điều hướng bên trái (màu hồng)
         createNavigationPanel();
         mainPanel.add(navPanel, BorderLayout.WEST);
-
-        // 2. JSplitPane để chia đôi phần nội dung
-        JSplitPane splitPane = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT,
-                createMedicalRecordPanel(),
-                createPrescriptionPanel()
-        );
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, createMedicalRecordPanel(), createPrescriptionPanel());
         splitPane.setResizeWeight(0.55);
         mainPanel.add(splitPane, BorderLayout.CENTER);
-
-        // 3. Panel chứa các nút Save/Cancel cho toàn bộ cửa sổ (THÊM MỚI)
         JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         JButton btnSaveWindow = new JButton("Save & Close");
         JButton btnCancelWindow = new JButton("Cancel");
-        
         btnSaveWindow.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnCancelWindow.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        
         bottomButtonPanel.add(btnSaveWindow);
         bottomButtonPanel.add(btnCancelWindow);
         mainPanel.add(bottomButtonPanel, BorderLayout.SOUTH);
-
-        // Gắn sự kiện để quay về trang chính
         btnSaveWindow.addActionListener(e -> backToMainPage());
         btnCancelWindow.addActionListener(e -> backToMainPage());
-
-        // Thêm panel chính vào Frame
         this.setContentPane(mainPanel);
     }
-
-    /**
-     * === THAY ĐỔI 2: Tạo hàm mới để xử lý việc quay về trang chính ===
-     */
-    private void backToMainPage() {
-        new AppointmentForm().setVisible(true);
-        this.dispose(); // Đóng cửa sổ hiện tại
-    }
-
-    // ... (Các hàm còn lại giữ nguyên như phiên bản trước)
+    
+    private void backToMainPage() { new AppointmentForm().setVisible(true); this.dispose(); }
 
     private JPanel createMedicalRecordPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
@@ -119,8 +92,10 @@ public class MedicalRecordForm extends JFrame {
         fieldsPanel.add(txtDoctorName);
         JPanel buttonsPanel = new JPanel(new FlowLayout());
         btnSearch = new JButton("Search");
+        btnEditRecord = new JButton("Edit Selected Record");
         btnDeleteRecord = new JButton("Delete Selected Record");
         buttonsPanel.add(btnSearch);
+        buttonsPanel.add(btnEditRecord);
         buttonsPanel.add(btnDeleteRecord);
         searchPanel.add(fieldsPanel);
         searchPanel.add(buttonsPanel);
@@ -131,16 +106,18 @@ public class MedicalRecordForm extends JFrame {
         tblRecords = new JTable(recordTableModel);
         tblRecords.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         panel.add(new JScrollPane(tblRecords), BorderLayout.CENTER);
-        tblRecords.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
-            if (!e.getValueIsAdjusting()) {
-                updatePrescriptionView();
-            }
+        tblRecords.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) updatePrescriptionView();
         });
         btnSearch.addActionListener(evt -> searchRecords());
+        btnEditRecord.addActionListener(evt -> editSelectedRecord());
         btnDeleteRecord.addActionListener(evt -> deleteSelectedRecord());
         return panel;
     }
 
+    /**
+     * === THAY ĐỔI 2: Cập nhật lại các nút trong panel đơn thuốc ===
+     */
     private JPanel createPrescriptionPanel() {
         prescriptionPanel = new JPanel(new BorderLayout(10, 10));
         prescriptionPanel.setBorder(BorderFactory.createTitledBorder("Prescriptions for Selected Record"));
@@ -159,26 +136,101 @@ public class MedicalRecordForm extends JFrame {
         formPanel.add(new JScrollPane(txtInstructions));
         JPanel formContainer = new JPanel(new BorderLayout());
         formContainer.add(formPanel, BorderLayout.CENTER);
+        
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-        btnSavePrescription = new JButton("Save");
-        btnCancelPrescription = new JButton("Cancel");
-        btnDeletePrescription = new JButton("Delete Prescription");
-        buttonPanel.add(btnSavePrescription);
-        buttonPanel.add(btnCancelPrescription);
+        btnAddOrUpdate = new JButton("Add / Update"); // Nút chính, vừa thêm vừa sửa
+        btnNew = new JButton("New"); // Nút để xóa trắng form, chuẩn bị thêm mới
+        btnDeletePrescription = new JButton("Delete");
+        
+        buttonPanel.add(btnAddOrUpdate);
+        buttonPanel.add(btnNew);
         buttonPanel.add(btnDeletePrescription);
+        
         formContainer.add(buttonPanel, BorderLayout.SOUTH);
         prescriptionPanel.add(formContainer, BorderLayout.NORTH);
+        
         prescriptionTableModel = new DefaultTableModel(new String[]{"ID", "Medicine", "Dosage", "Qty"}, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tblPrescriptions = new JTable(prescriptionTableModel);
         prescriptionPanel.add(new JScrollPane(tblPrescriptions), BorderLayout.CENTER);
-        btnSavePrescription.addActionListener(evt -> savePrescription());
-        btnCancelPrescription.addActionListener(evt -> clearPrescriptionForm());
+        
+        tblPrescriptions.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int selectedRow = tblPrescriptions.getSelectedRow();
+                if (selectedRow != -1) {
+                    currentlyEditingPrescriptionId = (Integer) tblPrescriptions.getValueAt(selectedRow, 0);
+                    txtMedicineName.setText((String) tblPrescriptions.getValueAt(selectedRow, 1));
+                    txtDosage.setText((String) tblPrescriptions.getValueAt(selectedRow, 2));
+                    txtQuantity.setText(String.valueOf(tblPrescriptions.getValueAt(selectedRow, 3)));
+                    Prescription p = prescriptionDAO.getPrescriptionById(currentlyEditingPrescriptionId);
+                    if (p != null) txtInstructions.setText(p.getInstructions());
+                }
+            }
+        });
+        
+        btnAddOrUpdate.addActionListener(evt -> addOrUpdatePrescription());
+        btnNew.addActionListener(evt -> clearPrescriptionForm());
         btnDeletePrescription.addActionListener(evt -> deleteSelectedPrescription());
+        
         setPrescriptionPanelEnabled(false);
         return prescriptionPanel;
     }
+    
+    /**
+     * === THAY ĐỔI 3: Đổi tên hàm thành addOrUpdatePrescription cho rõ nghĩa ===
+     */
+    private void addOrUpdatePrescription() {
+        int selectedRecordRow = tblRecords.getSelectedRow();
+        if (selectedRecordRow == -1) { JOptionPane.showMessageDialog(this, "Please select a medical record first.", "Warning", JOptionPane.WARNING_MESSAGE); return; }
+        int recordId = (int) tblRecords.getValueAt(selectedRecordRow, 0);
+        String medicineName = txtMedicineName.getText().trim();
+        String dosage = txtDosage.getText().trim();
+        String instructions = txtInstructions.getText().trim();
+        String quantityStr = txtQuantity.getText().trim();
+        if (medicineName.isEmpty() || dosage.isEmpty() || quantityStr.isEmpty()) { JOptionPane.showMessageDialog(this, "Medicine Name, Dosage, and Quantity are required.", "Validation Error", JOptionPane.WARNING_MESSAGE); return; }
+        int quantity;
+        try { quantity = Integer.parseInt(quantityStr); } catch (NumberFormatException e) { JOptionPane.showMessageDialog(this, "Quantity must be a valid number.", "Validation Error", JOptionPane.ERROR_MESSAGE); return; }
+        Prescription p = new Prescription();
+        p.setRecordId(recordId);
+        p.setMedicineName(medicineName);
+        p.setDosage(dosage);
+        p.setQuantity(quantity);
+        p.setInstructions(instructions);
+        
+        boolean success;
+        String action;
+        if (currentlyEditingPrescriptionId == null) {
+            // Chế độ THÊM MỚI
+            success = prescriptionDAO.addPrescription(p);
+            action = "added";
+        } else {
+            // Chế độ CẬP NHẬT
+            p.setPrescriptionId(currentlyEditingPrescriptionId);
+            success = prescriptionDAO.updatePrescription(p);
+            action = "updated";
+        }
+        
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Prescription " + action + " successfully.");
+            loadPrescriptionsForRecord(recordId);
+            clearPrescriptionForm();
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to save prescription.", "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void clearPrescriptionForm() {
+        txtMedicineName.setText("");
+        txtDosage.setText("");
+        txtQuantity.setText("");
+        txtInstructions.setText("");
+        currentlyEditingPrescriptionId = null;
+        tblPrescriptions.clearSelection();
+    }
+    
+    // ... (Các hàm còn lại giữ nguyên)
     
     private void createNavigationPanel() {
         navPanel = new JPanel();
@@ -205,49 +257,21 @@ public class MedicalRecordForm extends JFrame {
         }
         btnMedicalRecord.setBackground(Color.WHITE);
     }
-    
-    private void savePrescription() {
-        int selectedRecordRow = tblRecords.getSelectedRow();
-        if (selectedRecordRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a medical record first.", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        int recordId = (int) tblRecords.getValueAt(selectedRecordRow, 0);
-        String medicineName = txtMedicineName.getText().trim();
-        String dosage = txtDosage.getText().trim();
-        String instructions = txtInstructions.getText().trim();
-        String quantityStr = txtQuantity.getText().trim();
-        if (medicineName.isEmpty() || dosage.isEmpty() || quantityStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Medicine Name, Dosage, and Quantity are required.", "Validation Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        int quantity;
-        try {
-            quantity = Integer.parseInt(quantityStr);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Quantity must be a valid number.", "Validation Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        Prescription p = new Prescription();
-        p.setRecordId(recordId);
-        p.setMedicineName(medicineName);
-        p.setDosage(dosage);
-        p.setQuantity(quantity);
-        p.setInstructions(instructions);
-        if (prescriptionDAO.addPrescription(p)) {
-            JOptionPane.showMessageDialog(this, "Prescription saved successfully.");
-            loadPrescriptionsForRecord(recordId);
-            clearPrescriptionForm();
-        } else {
-            JOptionPane.showMessageDialog(this, "Failed to save prescription.", "Database Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
-    private void clearPrescriptionForm() {
-        txtMedicineName.setText("");
-        txtDosage.setText("");
-        txtQuantity.setText("");
-        txtInstructions.setText("");
+    private void editSelectedRecord() {
+        int selectedRow = tblRecords.getSelectedRow();
+        if (selectedRow == -1) { JOptionPane.showMessageDialog(this, "Please select a record to edit.", "Warning", JOptionPane.WARNING_MESSAGE); return; }
+        int recordId = (int) tblRecords.getValueAt(selectedRow, 0);
+        String currentDiagnosis = (String) tblRecords.getValueAt(selectedRow, 4);
+        String newDiagnosis = JOptionPane.showInputDialog(this, "Enter new diagnosis:", currentDiagnosis);
+        if (newDiagnosis != null && !newDiagnosis.trim().isEmpty() && !newDiagnosis.equals(currentDiagnosis)) {
+            if (recordDAO.updateMedicalRecordDiagnosis(recordId, newDiagnosis.trim())) {
+                JOptionPane.showMessageDialog(this, "Diagnosis updated successfully.");
+                loadAllRecords();
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to update diagnosis.", "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
     
     private void loadAllRecords() {
@@ -280,10 +304,7 @@ public class MedicalRecordForm extends JFrame {
 
     private void deleteSelectedRecord() {
         int selectedRow = tblRecords.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a record to delete.", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        if (selectedRow == -1) { JOptionPane.showMessageDialog(this, "Please select a record to delete.", "Warning", JOptionPane.WARNING_MESSAGE); return; }
         int recordId = (int) tblRecords.getValueAt(selectedRow, 0);
         int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete record ID: " + recordId + "?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
@@ -306,6 +327,7 @@ public class MedicalRecordForm extends JFrame {
             setPrescriptionPanelEnabled(false);
             prescriptionTableModel.setRowCount(0);
         }
+        clearPrescriptionForm();
     }
 
     private void loadPrescriptionsForRecord(int recordId) {
@@ -320,10 +342,7 @@ public class MedicalRecordForm extends JFrame {
     
     private void deleteSelectedPrescription() {
         int selectedPrescriptionRow = tblPrescriptions.getSelectedRow();
-        if (selectedPrescriptionRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a prescription to delete.", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        if (selectedPrescriptionRow == -1) { JOptionPane.showMessageDialog(this, "Please select a prescription to delete.", "Warning", JOptionPane.WARNING_MESSAGE); return; }
         int prescriptionId = (int) tblPrescriptions.getValueAt(selectedPrescriptionRow, 0);
         int confirm = JOptionPane.showConfirmDialog(this, "Delete this medicine from the prescription?", "Confirm", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
@@ -337,11 +356,9 @@ public class MedicalRecordForm extends JFrame {
     }
 
     private void setPrescriptionPanelEnabled(boolean enabled) {
-        Component[] components = prescriptionPanel.getComponents();
-        for (Component component : components) {
+        for (Component component : prescriptionPanel.getComponents()) {
             if (component instanceof JPanel) {
-                Component[] subComponents = ((JPanel) component).getComponents();
-                for (Component subComponent : subComponents) {
+                for (Component subComponent : ((JPanel) component).getComponents()) {
                     subComponent.setEnabled(enabled);
                     if (subComponent instanceof JScrollPane) {
                          ((JScrollPane) subComponent).getViewport().getView().setEnabled(enabled);
