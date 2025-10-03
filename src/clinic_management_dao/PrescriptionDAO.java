@@ -11,9 +11,7 @@ import java.util.List;
 public class PrescriptionDAO {
 
     /**
-     * === HÀM MỚI BỊ THIẾU ===
      * Lấy thông tin chi tiết của MỘT đơn thuốc dựa trên ID.
-     * Rất quan trọng cho chức năng Edit.
      */
     public Prescription getPrescriptionById(int prescriptionId) {
         String sql = "SELECT * FROM prescriptions WHERE prescription_id = ?";
@@ -78,9 +76,6 @@ public class PrescriptionDAO {
         }
     }
 
-    /**
-     * === HÀM MỚI ĐỂ CẬP NHẬT ===
-     */
     public boolean updatePrescription(Prescription p) {
         String sql = "UPDATE prescriptions SET medicine_name = ?, dosage = ?, quantity = ?, instructions = ? WHERE prescription_id = ?";
         try (Connection conn = Connect.ConnectDB();

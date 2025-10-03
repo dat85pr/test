@@ -7,8 +7,8 @@ public class MedicalRecord {
     private int appointmentId;
     private int patientId;
     private int doctorId;
-    private Integer diseaseId; // Giữ lại để tương thích
-    private String diseaseName; // THÊM THUỘC TÍNH NÀY
+    private Integer diseaseId; 
+    private String diseaseName; 
     private String diagnosis;
     private String treatment;
     private Date createdAt;

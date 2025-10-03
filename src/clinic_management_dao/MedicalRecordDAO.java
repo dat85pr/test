@@ -32,7 +32,6 @@ public class MedicalRecordDAO {
     }
 
     /**
-     * === HÀM UPDATE BỊ THIẾU ĐÂY ===
      * Cập nhật lại phần chẩn đoán (diagnosis) cho một hồ sơ bệnh án.
      * @param recordId ID của hồ sơ cần cập nhật.
      * @param newDiagnosis Chuỗi chẩn đoán mới.

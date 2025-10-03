@@ -2,7 +2,7 @@ package clinic_management_dao;
 
 import java.util.Date;
 
-// Class này chỉ để chứa dữ liệu hiển thị, không tương ứng 1-1 với bảng nào
+
 public class MedicalRecordDisplay {
     private int recordId;
     private String patientName;

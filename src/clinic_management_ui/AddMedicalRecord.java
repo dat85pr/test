@@ -29,7 +29,7 @@ public class AddMedicalRecord extends JDialog {
         setLocationRelativeTo(owner);
         setLayout(new BorderLayout(10, 10));
         
-        // --- Giao diện (Tương tự phiên bản trước) ---
+        // --- Giao diện ---
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -68,7 +68,7 @@ public class AddMedicalRecord extends JDialog {
 
     private void saveMedicalRecord() {
         Appointment selectedApp = (Appointment) appointmentComboBox.getSelectedItem();
-        // --- CẢI TIẾN 1: Kiểm tra dữ liệu đầu vào ---
+        // --- Kiểm tra dữ liệu đầu vào ---
         if (selectedApp == null) {
             JOptionPane.showMessageDialog(this, "Please select an appointment.", "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
@@ -89,7 +89,7 @@ public class AddMedicalRecord extends JDialog {
 
         if (medicalRecordDAO.addMedicalRecord(record)) {
             JOptionPane.showMessageDialog(this, "Medical record added successfully!");
-            // --- CẢI TIẾN 2: Dùng biến cờ báo hiệu thành công ---
+            // ---Dùng biến cờ báo hiệu thành công ---
             succeeded = true;
             dispose(); // Đóng cửa sổ
         } else {
@@ -97,7 +97,7 @@ public class AddMedicalRecord extends JDialog {
         }
     }
 
-    // --- CẢI TIẾN 3: Thêm hàm để cửa sổ cha kiểm tra ---
+    // --- Thêm hàm để cửa sổ cha kiểm tra ---
     public boolean isSucceeded() {
         return succeeded;
     }

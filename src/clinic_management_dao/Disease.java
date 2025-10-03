@@ -1,11 +1,10 @@
 package clinic_management_dao;
 
 public class Disease {
-    // ... các thuộc tính và constructor của bạn giữ nguyên ...
 
     @Override
     public String toString() {
-        return diseaseName; // Hiển thị tên trong JComboBox
+        return diseaseName;
     }
     
     // ... getters and setters

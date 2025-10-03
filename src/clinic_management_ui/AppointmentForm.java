@@ -320,22 +320,20 @@ public class AppointmentForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {                                         
     try {
-        // In ra console để biết sự kiện đã được gọi
+        
         System.out.println("Nút Medical Record đã được nhấn. Đang khởi tạo MedicalRecordForm...");
 
-        // Tạo cửa sổ MedicalRecordForm mới
+       
         MedicalRecordForm medicalForm = new MedicalRecordForm();
         
-        // Làm cho nó hiện ra
+     
         medicalForm.setVisible(true);
         
-        // Chỉ đóng cửa sổ hiện tại NẾU cửa sổ mới đã tạo thành công
+        
         this.dispose(); 
 
         } catch (Exception e) {
-        // === BẪY LỖI NẰM Ở ĐÂY ===
-        // Nếu có bất kỳ lỗi nào xảy ra trong lúc tạo MedicalRecordForm,
-        // nó sẽ bị bắt lại và hiển thị trong một hộp thoại.
+ 
         
             JOptionPane.showMessageDialog(
                 this, 
@@ -344,7 +342,7 @@ public class AppointmentForm extends javax.swing.JFrame {
              JOptionPane.ERROR_MESSAGE
             );
         
-            // In toàn bộ lỗi ra cửa sổ Output của NetBeans để xem chi tiết
+            
             e.printStackTrace();
         }
     }  
