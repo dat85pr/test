@@ -6,6 +6,13 @@
             <file>file:/C:/Users/OS/OneDrive/Documents/NetBeansProjects/Clinic-Management-System/src/clinic_management_ui/AppointmentForm.java</file>
             <file>file:/C:/Users/OS/OneDrive/Documents/NetBeansProjects/Clinic-Management-System/src/clinic_management_ui/MedicalRecordForm.java</file>
             <file>file:/C:/Users/OS/OneDrive/Documents/NetBeansProjects/Clinic-Management-System/src/clinic_management_dao/MedicalRecordDAO.java</file>
+            <file>file:/C:/Users/OS/OneDrive/Documents/NetBeansProjects/Clinic-Management-System/src/clinic_management_ui/AddMedicalRecord.java</file>
+            <file>file:/C:/Users/OS/OneDrive/Documents/NetBeansProjects/Clinic-Management-System/src/clinic_management_dao/PrescriptionDAO.java</file>
+            <file>file:/C:/Users/OS/OneDrive/Documents/NetBeansProjects/Clinic-Management-System/src/clinic_management_dao/Prescription.java</file>
+            <file>file:/C:/Users/OS/OneDrive/Documents/NetBeansProjects/Clinic-Management-System/src/clinic_management_dao/MedicalRecordDisplay.java</file>
+            <file>file:/C:/Users/OS/OneDrive/Documents/NetBeansProjects/Clinic-Management-System/src/clinic_management_dao/MedicalRecord.java</file>
+            <file>file:/C:/Users/OS/OneDrive/Documents/NetBeansProjects/Clinic-Management-System/src/clinic_management_dao/DiseaseDAO.java</file>
+            <file>file:/C:/Users/OS/OneDrive/Documents/NetBeansProjects/Clinic-Management-System/src/clinic_management_dao/Disease.java</file>
         </group>
     </open-files>
 </project-private>

@@ -44,7 +44,7 @@ public class MedicalRecordForm extends JFrame {
     private DefaultTableModel prescriptionTableModel;
     private JTextField txtMedicineName, txtDosage, txtQuantity;
     private JTextArea txtInstructions;
-    // === THAY ĐỔI 1: Đổi tên các nút ===
+    // === Đổi tên các nút ===
     private JButton btnAddOrUpdate, btnNew, btnDeletePrescription;
     private JPanel navPanel;
 
@@ -116,7 +116,7 @@ public class MedicalRecordForm extends JFrame {
     }
 
     /**
-     * === THAY ĐỔI 2: Cập nhật lại các nút trong panel đơn thuốc ===
+     * === Cập nhật lại các nút trong panel đơn thuốc ===
      */
     private JPanel createPrescriptionPanel() {
         prescriptionPanel = new JPanel(new BorderLayout(10, 10));
@@ -179,7 +179,7 @@ public class MedicalRecordForm extends JFrame {
     }
     
     /**
-     * === THAY ĐỔI 3: Đổi tên hàm thành addOrUpdatePrescription cho rõ nghĩa ===
+     * ===Đổi tên hàm thành addOrUpdatePrescription===
      */
     private void addOrUpdatePrescription() {
         int selectedRecordRow = tblRecords.getSelectedRow();
@@ -202,11 +202,11 @@ public class MedicalRecordForm extends JFrame {
         boolean success;
         String action;
         if (currentlyEditingPrescriptionId == null) {
-            // Chế độ THÊM MỚI
+            // THÊM MỚI
             success = prescriptionDAO.addPrescription(p);
             action = "added";
         } else {
-            // Chế độ CẬP NHẬT
+            // CẬP NHẬT
             p.setPrescriptionId(currentlyEditingPrescriptionId);
             success = prescriptionDAO.updatePrescription(p);
             action = "updated";
@@ -230,7 +230,7 @@ public class MedicalRecordForm extends JFrame {
         tblPrescriptions.clearSelection();
     }
     
-    // ... (Các hàm còn lại giữ nguyên)
+  
     
     private void createNavigationPanel() {
         navPanel = new JPanel();
